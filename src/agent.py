@@ -1,3 +1,5 @@
+import time
+
 from src.detection.model import detect
 from src.messaging.generate_message import generate_message
 from src.storage.db import get_session, initialize_database
@@ -9,6 +11,9 @@ POLLUTANT = "pm25"
 UNIT = "µg/m³"
 
 CITIES = ["Mumbai", "Delhi", "Pune"]
+
+# Check the database frequently for newly inserted readings.
+POLL_INTERVAL_SECONDS = 1
 
 
 def get_last_processed_id(session, city: str) -> int:
@@ -52,7 +57,7 @@ def process_reading(reading: Reading) -> None:
             session=session,
             city=reading.city,
             current_value=reading.value,
-            current_reading_id=reading.id
+            current_reading_id=reading.id,
         )
 
         station_id = reading.station_name or str(reading.location_id)
@@ -117,6 +122,7 @@ def process_new_readings() -> None:
                     city,
                     reading.id,
                 )
+            # print("*" * 60)
 
     finally:
         session.close()
@@ -124,7 +130,17 @@ def process_new_readings() -> None:
 
 def run_agent() -> None:
     initialize_database()
-    process_new_readings()
+
+    print("Air Quality Agent started.")
+    print("Watching data/live.db for new readings...")
+
+    while True:
+        try:
+            process_new_readings()
+        except Exception as e:
+            print(f"Agent error: {e}")
+
+        time.sleep(POLL_INTERVAL_SECONDS)
 
 
 if __name__ == "__main__":
