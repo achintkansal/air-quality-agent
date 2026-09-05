@@ -1,0 +1,16 @@
+stations:
+  - city: Mumbai
+    location_id: 12040
+    sensor_id: 12236481
+    name: "Mulund West, Mumbai - MPCB"
+
+  - city: Delhi
+    location_id: 17
+    sensor_id: 12234787
+    name: "R K Puram, Delhi - DPCC"
+
+
+  - city: Pune
+    location_id: 3409439
+    sensor_id: 12238005
+    name: "Savitribai Phule Pune University, Pune - MPCB"
